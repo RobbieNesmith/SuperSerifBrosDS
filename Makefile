@@ -33,9 +33,9 @@ ICON     :=
 NITRO    :=
 
 # These set the information text in the nds file
-GAME_TITLE     := Advanced ARM9 template
-GAME_SUBTITLE1 := built with devkitARM
-GAME_SUBTITLE2 := http://devitpro.org
+GAME_TITLE     := Super Serif Bros DS
+GAME_SUBTITLE1 := Bobberto1995
+GAME_SUBTITLE2 := http://robbienesmith.github.io
 
 #---------------------------------------------------------------------------------
 # options for code generation
