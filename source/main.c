@@ -7,6 +7,8 @@ Bobberto1995 2019
 
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
+#include <fat.h>
+
 #include <stdio.h>
 #include <string.h>
 
@@ -85,7 +87,11 @@ int main(void) {
 	
 	consoleInit(&topScreen, 3, BgType_Text4bpp, BgSize_T_256x256, 31, 0, true, true);
 	consoleInit(&bottomScreen, 3, BgType_Text4bpp, BgSize_T_256x256, 31, 0, false, true);
-
+  
+  // Set up filesystem
+  fatInitDefault();
+  
+  // Load level
   load();
   // Game loop
   while(1) {
@@ -218,7 +224,28 @@ char* getStString() {
 * @return a string containing the level data
 */
 char* fetchLevel(int level) {
-  return "################################################################################\n///                                                                             \n//                                                                              \n/                                                                               \n            I                                                                   \n                                              ##                                \n                                             ####                               \n                                             ####                               \n                                              ##                                \n                                              ##                                \n       ##                                     ##                                \n      ####             e             $   $    ##                                \n      ####           ###########################                                \n       ##           ###         #                                               \n       ##          ####         #                                               \n       ##########################                                               \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                                \n                                                                               /\n                                                                              //\n                                                                             ///\n################################################################################";
+  char fileName[50];
+  fileName[0] = '\0';
+  sprintf(fileName, "/DATA/bobberto1995/superserifbrosds/levels/%i.txt", level);
+  FILE* levelFile = fopen(fileName, "r");
+  if (!levelFile) {
+    consoleSelect(&bottomScreen);
+    iprintf("Error opening file!");
+    iprintf("Filename: ");
+    iprintf(fileName);
+    while(1) {
+      swiWaitForVBlank();
+    }
+  }
+  static char levelData[TERM_WIDTH * TERM_HEIGHT + 1];
+  int c;
+  int index = 0;
+  while ((c = fgetc(levelFile)) != EOF && index < TERM_WIDTH * TERM_HEIGHT) {
+    levelData[index] = (char) c;
+    index++;
+  }
+  fclose(levelFile);
+  return levelData;
 }
 
 /**
@@ -857,8 +884,8 @@ void checkKeyPressed() {
     kd_up = 1;
   }
   if (keysHeld() & KEY_DOWN) {
-    key_up = 1;
-    kd_up = 1;
+    key_down = 1;
+    kd_down = 1;
   }
   if ((keysHeld() & KEY_SELECT) && !key_select) {
     key_start = true;
