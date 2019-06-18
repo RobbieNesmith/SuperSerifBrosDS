@@ -19,6 +19,8 @@ Bobberto1995 2019
 #define TERM_WIDTH 80
 #define TERM_HEIGHT 25
 
+#define SCROLL_TIMER_MAX 8
+
 // Stuff for C
 char ar[TERM_HEIGHT][TERM_WIDTH];
 char arp[TERM_HEIGHT][TERM_WIDTH];
@@ -49,6 +51,9 @@ char fl;
 int key_left, key_right, key_up, key_down;
 bool key_r, key_start, key_select;
 int kd_left, kd_right, kd_up, kd_down;
+// scroll timers for moving the camera
+int timerLeft, timerRight, timerUp, timerDown;
+int offsetX, offsetY;
 bool can_advance;
 char sp = ' ';
 int dx, dy;
@@ -166,7 +171,7 @@ char* getStString() {
   } else if (stop_loop == 2) {
     strcat(str, "NICELY DONE! [START] FOR NEXT\nLEVEL OR [R] TO RE-TRY\n");
   } else {
-    strcat(str, "\n\n");
+    strcat(str, "                                                                ");
   }
   strcat(str, "[Level %i][$'s left: %i]");
   return str;
@@ -234,6 +239,8 @@ void clearBestLevel() {
 * Loads a level into the playfield and resets status parameters
 */
 void load() {
+  offsetX = 0;
+  offsetY = 0;
   frames = 0;
   if(level > bestlevel) {
     bestlevel = level;
@@ -865,6 +872,41 @@ void checkKeyPressed() {
   if (keysHeld() & KEY_R) {
     load();
   }
+  
+  // Camera controls
+  if (keysHeld() & KEY_L) {
+    offsetX = 0;
+    offsetY = 0;
+  }
+  if ((keysHeld() & KEY_Y) && timerLeft <= 0) {
+    timerLeft = SCROLL_TIMER_MAX;
+    offsetX--;
+  }
+  if ((keysHeld() & KEY_A) && timerRight <= 0) {
+    timerRight = SCROLL_TIMER_MAX;
+    offsetX++;
+  }
+  if ((keysHeld() & KEY_X) && timerUp <= 0) {
+    timerUp = SCROLL_TIMER_MAX;
+    offsetY--;
+  }
+  if ((keysHeld() & KEY_B) && timerDown <= 0) {
+    timerDown = SCROLL_TIMER_MAX;
+    offsetY++;
+  }
+  
+  if (timerLeft > 0) {
+    timerLeft--;
+  }
+  if (timerRight > 0) {
+    timerRight--;
+  }
+  if (timerUp > 0) {
+    timerUp--;
+  }
+  if (timerDown > 0) {
+    timerDown--;
+  }
 }
 
 void checkKeyReleased() {
@@ -906,8 +948,8 @@ void checkKeyReleased() {
 }
 
 int getDsScreenCoordinates() {
-  int centerX = 0;
-  int centerY = 0;
+  int centerX = offsetX;
+  int centerY = offsetY;
   int numCharacters = 0;
   int x = 0;
   int y = 0;
@@ -926,15 +968,27 @@ int getDsScreenCoordinates() {
   centerY -= HEIGHT / 2;
   if (centerX < 0) {
     centerX = 0;
+    if (offsetX < 0) {
+      offsetX++;
+    }
   }
   if (centerX >= TERM_WIDTH - WIDTH) {
     centerX = TERM_WIDTH - WIDTH - 1;
+    if (offsetX > 0) {
+      offsetX--;
+    }
   }
   if (centerY < 0) {
     centerY = 0;
+    if (offsetY < 0) {
+      offsetY++;
+    }
   }
   if (centerY >= TERM_HEIGHT - HEIGHT) {
     centerY = TERM_HEIGHT - HEIGHT - 1;
+    if (offsetY > 0) {
+      offsetY--;
+    }
   }
   return centerX + (centerY << 8);
 }

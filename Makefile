@@ -26,7 +26,7 @@ INCLUDES := include
 DATA     :=
 GRAPHICS :=
 AUDIO    :=
-ICON     :=
+ICON     := icon.png
 
 # specify a directory which contains the nitro filesystem
 # this is relative to the Makefile
@@ -203,7 +203,7 @@ $(SOUNDBANK) : $(MODFILES)
 $(GAME_ICON): $(notdir $(ICON))
 #---------------------------------------------------------------------------------
 	@echo convert $(notdir $<)
-	@grit $< -g -gt -gB4 -gT FF00FF -m! -p -pe 16 -fh! -ftr
+	@grit $< -g -gt -gB4 -m! -p -pe 16 -fh! -ftr
 
 -include $(DEPSDIR)/*.d
 
