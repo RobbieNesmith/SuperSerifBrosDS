@@ -1,4 +1,3 @@
-void updatePf(char* arr);
 char getPfCh(int x, int y);
 void setupDsScreen();
 void replace(char a, char b);
