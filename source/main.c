@@ -8,6 +8,7 @@ Bobberto1995 2019
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
 #include <fat.h>
+#include "main.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -17,31 +18,6 @@ Bobberto1995 2019
 
 #define TERM_WIDTH 80
 #define TERM_HEIGHT 25
-
-void updatePf(char* arr);
-char getPfCh(int x, int y);
-void setupDsScreen();
-void replace(char a, char b);
-void swap(char a, char b);
-char* getStString();
-int getBestLevel();
-void setBestLevel(int level);
-void clearBestLevel();
-void load();
-void copyA(char** to, char** from);
-void frameLoop();
-void doFrame1();
-void doFrame8();
-bool isEnemy(char x);
-bool canfall(char x);
-bool conveys(char x);
-bool probe(int x, int y, char ch);
-void die();
-void win();
-void pollInput();
-void checkKeyPressed();
-void checkKeyReleased();
-int getDsScreenCoordinates();
 
 // Stuff for C
 char ar[TERM_HEIGHT][TERM_WIDTH];
@@ -108,27 +84,6 @@ int main(void) {
     }
 	}
 
-}
-/**
-* updatePf
-* Updates the playfield from the cache and draws to the screen
-* (maybe should also pass in cache?)
-* @arg arr the array of arrays of chars representing the playfield
-*/
-void updatePf(char* arr) {
-  int y;
-  int x;
-  for (y = 0; y < TERM_HEIGHT; y++) {
-    for (x = 0; x < TERM_WIDTH; x++) {
-      if (arp[y][x] != ar[y][x]) {
-        char ch = getPfCh(x, y);
-        if (ch == 'I' && !moved) {
-          // set color to blue
-        }
-        // update to screen
-      }
-    }
-  }
 }
 
 /**
@@ -199,8 +154,8 @@ void swap(char a, char b) {
 
 /**
 * getStString
-* Gets the status string. This information will be displayed on the DS's top
-* screen in this port.
+* Gets the status string. This information will be displayed on the DS's bottom
+* screen.
 * @return the status string showing level and money information
 */
 char* getStString() {
@@ -471,6 +426,14 @@ bool conveys(char x) {
   return false;
 }
 
+/**
+* probe
+* Check for interactions between different characters in the playfield
+* @arg x the x coordinate to check
+* @arg y the y coordinate to check
+* @arg ch the character to interact with
+* @return 
+*/
 bool probe(int x, int y, char ch) {
   if(y >= 25 || y < 0 || x >= 80 || x < 0) return true;
 		
@@ -564,7 +527,7 @@ void doFrame1() {
         arp[y][x]=sp;
       } else if (ch - 48 >= 1 && ch - 48 <= 9) {
         if (ar[y-1][x] != sp) {
-          arp[y][x] = ch - 49;
+          arp[y][x] = ch - 1;
         }
       } else {
         switch(ch) {
@@ -888,7 +851,7 @@ void checkKeyPressed() {
     kd_down = 1;
   }
   if ((keysHeld() & KEY_SELECT) && !key_select) {
-    key_start = true;
+    key_select = true;
     can_advance = false;
     level++;
     load();
