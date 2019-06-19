@@ -26,7 +26,7 @@ INCLUDES := include
 DATA     :=
 GRAPHICS :=
 AUDIO    :=
-ICON     := icon.png
+ICON     :=
 
 # specify a directory which contains the nitro filesystem
 # this is relative to the Makefile
