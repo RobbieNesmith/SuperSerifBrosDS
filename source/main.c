@@ -79,12 +79,12 @@ int main(void) {
     if (!stop_loop) {
       frameLoop();
     }
-    
+  
+    checkKeyReleased();
+    checkKeyPressed();
     // run at 10FPS
     int i;
     for (i = 0; i < 6; i++) {
-      checkKeyReleased();
-      checkKeyPressed();
       swiWaitForVBlank();
     }
 	}
@@ -184,7 +184,7 @@ char* getStString() {
 * @return a string containing the level data
 */
 char* fetchLevel(int level) {
-  char fileName[50];
+  char fileName[100];
   fileName[0] = '\0';
   sprintf(fileName, "/DATA/bobberto1995/superserifbrosds/levels/%i.txt", level);
   FILE* levelFile = fopen(fileName, "r");
@@ -214,7 +214,26 @@ char* fetchLevel(int level) {
 * @return the index of the highest level you've reached
 */
 int getBestLevel() {
-  return 1;
+  char fileName[100];
+  sprintf(fileName, "/DATA/bobberto1995/superserifbrosds/saves/superserifbrothers.sav");
+  FILE* saveFile = fopen(fileName, "r");
+  if (!saveFile) {
+    // No save file created, start at the first level
+    consoleSelect(&bottomScreen);
+    iprintf("Error reading save file!");
+    return 1;
+  } else {
+    char data[5];
+    int c;
+    int index = 0;
+    while ((c = fgetc(saveFile)) != EOF && index < 4) {
+      data[index] = (char) c;
+      index++;
+    }
+    fclose(saveFile);
+    int levelNum = atoi(data);
+    return levelNum;
+  }
 }
 
 /**
@@ -223,6 +242,16 @@ int getBestLevel() {
 * @arg the index of the highest level you've reached
 */
 void setBestLevel(int level) {
+  char fileName[100];
+  sprintf(fileName, "/DATA/bobberto1995/superserifbrosds/saves/superserifbrothers.sav");
+  FILE* saveFile = fopen(fileName, "w");
+  if (!saveFile) {
+    consoleSelect(&bottomScreen);
+    iprintf("Error writing save file!");
+  } else {
+    fprintf(saveFile, "%i", bestlevel);
+  }
+  fclose(saveFile);
   return;
 }
 
