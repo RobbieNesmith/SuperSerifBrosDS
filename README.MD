@@ -2,6 +2,9 @@
 
 This is a port of the web game [Super Serif Brothers](http://foon.uk/farcade/ssb/) using LibNDS.
 
+## Travis status
+[![Build Status](https://travis-ci.org/RobbieNesmith/SuperSerifBrosDS.svg?branch=master)](https://travis-ci.org/RobbieNesmith/SuperSerifBrosDS)
+
 ## How to play
 
 D-Pad: Move
