@@ -1,0 +1,12 @@
+language: cpp
+
+services:
+  - docker
+
+before_install:
+- docker pull devkitpro/devkitarm
+- sudo docker run -t -d --name toolchain devkitpro/devkitarm
+- sudo docker exec -i -t toolchain /bin/sh -c "cd /root/ && git clone https://github.com/RobbieNesmith/SuperSerifBrosDS"
+
+script:
+- docker exec -it toolchain /bin/sh -c "cd /root/SuperSerifBrosDS && make"
